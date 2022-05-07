@@ -1,6 +1,8 @@
 plugins {
-    id 'com.android.application'
-    id 'org.jetbrains.kotlin.android'
+    id "com.android.application"
+    id "org.jetbrains.kotlin.android"
+    id "kotlin-kapt"
+    id "kotlin-android-extensions"
 }
 
 android {
@@ -23,20 +25,90 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_1_10
+        targetCompatibility JavaVersion.VERSION_1_10
     }
     kotlinOptions {
         jvmTarget = '1.8'
     }
+    buildFeatures {
+        viewBinding true
+    }
+    configurations.all {
+        resolutionStrategy.force 'com.google.code.findbugs:jsr305:3.0.0'
+    }
+
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
+
+    sourceSets {
+        main.res.srcDirs += ['src/main/res-activities',
+                             'src/main/res-fragment',
+                             'src/main/res-content',
+                             'src/main/res-row']
+    }
 }
 
 dependencies {
+    ext {
+        nav_version = "2.3.4"
+        hilt_version = '2.38.1'
+        lifecycle_version = '2.2.0'
+        retrofit_version = '2.9.0'
+        coconut_mvvm_version = '1.0.0-alpha4'
+        activity_version = '1.3.0'
+        coroutinesVersion = '1.4.3'
+        room_version = "2.3.0"
+    }
 
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.core:core-ktx:1.7.0'
-    implementation 'androidx.appcompat:appcompat:1.3.0'
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    //noinspection GradleCompatible
+    implementation 'androidx.appcompat:appcompat:1.3.1'
     implementation 'com.google.android.material:material:1.4.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.0'
+    implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
+    implementation "androidx.activity:activity-ktx:$activity_version"
+
+    // Jetpack navigation
+    implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
+    implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
+    implementation "androidx.legacy:legacy-support-v4:1.0.0"
+
+    // Database  (Optional)
+    implementation "androidx.room:room-runtime:$room_version"
+    implementation "androidx.room:room-ktx:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
+
+    // base
+    implementation "com.github.acan12:coconut-mvvm:$coconut_mvvm_version"
+    compileOnly "javax.annotation:jsr250-api:1.0"
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version" // Retrofit
+    implementation "com.squareup.retrofit2:converter-jackson:$retrofit_version"
+    implementation("com.squareup.okhttp3:okhttp")
+    implementation("com.squareup.okhttp3:logging-interceptor:3.9.0")
+    implementation 'com.google.android.play:core:1.6.1'
+
+    // Lifecycle  (Optional)
+    implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
+    // Caroutine  (Optional)
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$coroutinesVersion"
+
+    // Coconut MVVM
+    implementation "com.github.acan12:coconut-mvvm:$coconut_mvvm_version"
+    // HILT
+    implementation "com.google.dagger:hilt-android:$hilt_version"
+    kapt "com.google.dagger:hilt-compiler:$hilt_version"
+
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
